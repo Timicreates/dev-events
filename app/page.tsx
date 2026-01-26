@@ -12,7 +12,7 @@ const page = () => {
       </h1>
       <p className="text-center mt-5">Hackathons , Meetups , and conferences</p>
       <ExploreBtn />
-      <div className="mt-20 space-y-7">
+      <div className="mt-20 space-y-7 md:px-12">
         <h3>Featured Events</h3>
 
         <ul className="events list-none">
