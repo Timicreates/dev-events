@@ -18,6 +18,20 @@ if (
   // CLOUDINARY_URL is present; the library will pick it up automatically.
 }
 
+/**
+ * Handle POST requests to create a new Event from multipart/form-data.
+ *
+ * Expects form fields for event properties plus:
+ * - "image": a file to upload
+ * - "tags": JSON-encoded value (e.g., array or object)
+ * - "agenda": JSON-encoded value (e.g., array or object)
+ *
+ * @param req - The incoming NextRequest containing multipart/form-data for the event
+ * @returns A NextResponse containing JSON:
+ *          - On success (201): { message: "Event created successfully", event: <created event document> }
+ *          - On client error (400): { message: <error description> } for invalid JSON or missing image
+ *          - On server error (500): { message: "Event creation failed", error: <error message> }
+ */
 export async function POST(req: NextRequest) {
   try {
     await connectDB();
@@ -98,6 +112,11 @@ export async function POST(req: NextRequest) {
   }
 }
 
+/**
+ * Handle GET requests to retrieve all events sorted by creation time (newest first).
+ *
+ * @returns A JSON response with a success message and the `events` array with HTTP status 200 on success; on error, a JSON response with an error message and the error object with HTTP status 500.
+ */
 export async function GET() {
   try {
     await connectDB();

@@ -11,8 +11,11 @@ type RouteParams = {
 };
 
 /**
- * GET /api/events/[slug]
- * Fetches a single events by its slug
+ * Retrieve a single event identified by the route `slug`.
+ *
+ * @param req - The incoming NextRequest
+ * @param params - Route params object containing `slug`
+ * @returns A NextResponse containing the event when found; responds with status 200 on success, 400 when the slug is missing or invalid, 404 if no event matches the slug, or 500 on server/database errors
  */
 export async function GET(
   req: NextRequest,
