@@ -1,0 +1,12 @@
+version: "1.0"
+language: "en-US"
+reviews:
+  enabled: true
+  profile: "assertive" # Choices: chill, assertive, or comprehensive
+  request_reviews_from_ai: true
+  auto_review:
+    enabled: true
+    ignore_paths:
+      - "**/node_modules/**"
+      - "**/dist/**"
+      - "**/*.test.js"
