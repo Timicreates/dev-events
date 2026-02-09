@@ -6,7 +6,7 @@ import { IEvent } from "@/database/event.model";
 import { getSimilarEventsBySlug } from "@/lib/actions/event.action";
 import EventCard from "@/components/EventCard";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
 const EventDetailItem = ({
   icon,
@@ -27,8 +27,8 @@ const EventAgenda = ({ agendaItems }: { agendaItems: string[] }) => (
   <div className="agenda">
     <h2>Agenda</h2>
     <ul>
-      {agendaItems.map((item, idx) => (
-        <li key={idx}>{item}</li>
+      {agendaItems.map((item, index) => (
+        <li key={index}>{item}</li>
       ))}
     </ul>
   </div>
@@ -36,8 +36,8 @@ const EventAgenda = ({ agendaItems }: { agendaItems: string[] }) => (
 
 const EventTags = ({ tags }: { tags: string[] }) => (
   <div className="flex flex-row gap-1.5 flex-wrap">
-    {tags.map((tag, idx) => (
-      <div className="pill" key={`${tag}-${idx}`}>
+    {tags.map((tag, index) => (
+      <div className="pill" key={index}>
         {tag}
       </div>
     ))}
@@ -50,7 +50,8 @@ const EventDetailsPage = async ({
   params: Promise<{ slug: string }>;
 }) => {
   const { slug } = await params;
-  let description,
+  let _id,
+    description,
     image,
     overview,
     date,
@@ -63,10 +64,18 @@ const EventDetailsPage = async ({
 
   try {
     const response = await fetch(`${BASE_URL}/api/events/${slug}`);
-    if (!response.ok) return notFound();
+    if (!response.ok) {
+      console.error(
+        `Failed to fetch event ${slug}:`,
+        response.status,
+        await response.text(),
+      );
+      return notFound();
+    }
     const data = await response.json();
     ({
       event: {
+        _id,
         description,
         image,
         overview,
@@ -147,7 +156,7 @@ const EventDetailsPage = async ({
             ) : (
               <p className="text-sm">Be the first to book your spot</p>
             )}
-            <BookEvent />
+            <BookEvent eventId={String(_id)} slug={slug} />
           </div>
         </aside>
       </div>

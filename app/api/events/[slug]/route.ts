@@ -47,6 +47,48 @@ export async function GET(
       );
     }
 
+    // Normalize agenda and tags before returning to clients
+    const normalizeToArray = (value: any): string[] => {
+      try {
+        if (Array.isArray(value)) {
+          // If it's an array but contains a single JSON string, parse it
+          if (value.length === 1 && typeof value[0] === "string") {
+            const maybe = String(value[0]).trim();
+            if (maybe.startsWith("[")) {
+              try {
+                const parsed = JSON.parse(maybe);
+                if (Array.isArray(parsed))
+                  return parsed.map((v) => String(v).trim()).filter(Boolean);
+              } catch {}
+            }
+          }
+          return value.map((v) => String(v).trim()).filter(Boolean);
+        }
+
+        if (typeof value === "string") {
+          const s = value.trim();
+          if (s.startsWith("[")) {
+            try {
+              const parsed = JSON.parse(s);
+              if (Array.isArray(parsed))
+                return parsed.map((v) => String(v).trim()).filter(Boolean);
+            } catch {}
+          }
+          // fallback: comma separated
+          return s
+            .split(",")
+            .map((v) => v.trim())
+            .filter(Boolean);
+        }
+      } catch (e) {
+        // ignore
+      }
+      return [];
+    };
+
+    event.agenda = normalizeToArray(event.agenda);
+    event.tags = normalizeToArray(event.tags);
+
     // Return successful response with events data
     return NextResponse.json(
       { message: "Event fetched successfully", event },
